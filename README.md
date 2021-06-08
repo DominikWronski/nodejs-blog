@@ -42,19 +42,15 @@ npm run dev
 
 ## To do
 
-- [ ] Code clearing
 - [ ] Using better code practices
-- [X] Edit post method (forgot about it xd)
+- [X] Edit post method
 - [ ] Render amount of posts
 - [X] Post comments
-- [ ] Search feature
 - [ ] Remember password login option
 - [ ] Logout when jwt token is expired
 - [ ] isAdmin middleware
-- [ ] Article tags
-- [ ] Light theme & Dark theme
 - [ ] EdiPost.vue check if user is not owner of post or admin
-- [ ] Log server-side errors to txt?
+- [ ] Log server-side errors
 - [ ] Use headers instead of body
 - [ ] Handle errors on frontend
 - [ ] Check if its not spam/ validate if field is not null
