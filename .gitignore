@@ -1,0 +1,4 @@
+nodejs-blog-frontend/node_modules/
+nodejs-blog-backend/node_modules/
+nodejs-blog-backend/.env/
+/.idea/
