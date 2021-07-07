@@ -60,19 +60,10 @@ export default {
         } else if(this.body == "") {
             this.errors.push('Post body required.');
         } else {
-            // eslint-disable-next-line no-unused-vars
-            const response = await PostsService.addPost({
+            await PostsService.addPost({
               title: this.title,
               body: this.body,
             })
-
-            //?
-            // await PostsService.addPost({
-            //   title: this.title,
-            //   body: this.body,
-            //   user: this.user
-            //   // user: JSON.parse(this.user).user.token
-            // })
             this.$router.push('/')
         }
       } catch (error) {

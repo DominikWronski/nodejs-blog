@@ -42,6 +42,9 @@ npm run dev
 
 ## To do
 
+- [ ] Better comment editing
+- [ ] Comments component errors
+- [ ] Handle errors on frontend
 - [ ] Using better code practices
 - [X] Edit post method
 - [ ] Render amount of posts
@@ -49,10 +52,9 @@ npm run dev
 - [ ] Remember password login option
 - [ ] Logout when jwt token is expired
 - [ ] isAdmin middleware
-- [ ] EdiPost.vue check if user is not owner of post or admin
+- [X] EditPost.vue check if user is not owner of post or admin
 - [ ] Log server-side errors
-- [ ] Use headers instead of body
-- [ ] Handle errors on frontend
+- [X] Use headers instead of body
 - [ ] Check if its not spam/ validate if field is not null
 - [ ] Anti-spam, click cooldown frontend/backend
 - [ ] Limit spamming backend https://www.npmjs.com/package/express-rate-limit

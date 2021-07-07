@@ -13,11 +13,10 @@
               required
             ></v-text-field>
 
-  <!-- <p v-if="errors.length"> -->
-      <!-- <v-alert dense type="error" v-for="error in errors" :key="error">{{error}}</v-alert> -->
-  <!-- </p> -->
+            <p v-if="errors.length">
+                <v-alert dense type="error" v-for="error in errors" :key="error">{{error}}</v-alert>
+            </p>
 
-            <!-- <div class="danger-alert" v-html="error" /> -->
             <v-btn
               dark
               class="primary"
@@ -79,7 +78,6 @@
 
     </v-card-text>
 
-    <!-- <v-card-actions v-if="$store.state.user.isAdmin == true"> -->
     <v-card-actions v-if="($store.state.isUserLoggedIn && $store.state.user.isAdmin == true) || ($store.state.isUserLoggedIn && $store.state.user.id == comment.author_id)">
       <v-btn
         color="primary"
@@ -111,11 +109,9 @@ import CommentsService from '@/services/CommentsService'
       props: ['paramPostId'],
 
       data: () => ({
-        // comments: null,
         comments: [],
         comment: '',
         errors: [],
-        user: JSON.parse(localStorage.getItem('vuex')).token,
         editingNow: [],
         editInput: '',
       }),
@@ -123,9 +119,9 @@ import CommentsService from '@/services/CommentsService'
     methods: {
       async loadComments () {
         try {
-              this.comments = (await CommentsService.loadComments(this.paramPostId)).data
+          this.comments = (await CommentsService.loadComments(this.paramPostId)).data
         } catch (error) {
-          console.log(error);
+          this.errors.push(error.response.data)
         }
       },
 
@@ -138,19 +134,10 @@ import CommentsService from '@/services/CommentsService'
           if(this.comment.length < 3) {
             this.errors.push('Your comment is too short!');
           } else {
-            try {
-              console.log(this.paramPostId);
-              const response = await CommentsService.addComment(this.paramPostId, {
+              await CommentsService.addComment(this.paramPostId, {
                 body: this.comment,
-                user: this.user,
               })
-              // this.$router.push('/')
               location.reload();
-              console.log(response);
-            } catch (error) {
-              console.log(error)
-              this.errors.push(error)
-            }
           }
         }
       } catch (error) {
@@ -160,9 +147,7 @@ import CommentsService from '@/services/CommentsService'
 
       async deleteComment (id) {
         try {
-          await CommentsService.deleteComment(id, {
-              user: this.user,
-          })
+          await CommentsService.deleteComment(id)
           this.loadComments();
           
         } catch (error) {
@@ -176,15 +161,6 @@ import CommentsService from '@/services/CommentsService'
           this.editingNow[id] = true;
         }
         this.loadComments()
-        // try {
-        //   await CommentsService.editComment(id, {
-        //       user: this.user,
-        //   })
-        //   this.loadComments();
-          
-        // } catch (error) {
-        //   console.log(error);
-        // }
       },
       async editComment (id) {
         try {
@@ -196,23 +172,19 @@ import CommentsService from '@/services/CommentsService'
           this.loadComments();
           
         } catch (error) {
-          console.log(error);
+          this.errors.push(error.response.data)
         }
       }
     },
-
-          mounted () {
-            this.loadComments()
-            },
-  
+    mounted () {
+      this.loadComments()
+    },
   }
 </script>
 
 <style scoped>
-
 h1 {
   text-align: center;
   font-weight: 200;
 }
-
 </style>

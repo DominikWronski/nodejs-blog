@@ -60,24 +60,27 @@ module.exports = {
     // @access Authorized, only admin
     async addPost (req, res) {
         try {
-
             const tokenJWT = (req.headers.authorization).replace('Bearer ', '');
             const decodedJWT = jwt.verify(tokenJWT, process.env.TOKEN_SECRET)
 
             if(decodedJWT.isAdmin == true) {
-                const post = await Post.create({
-                    title: req.body.title,
-                    body: req.body.body,
-                    author_id: decodedJWT.id,
-                    author_name: decodedJWT.username
-                })
-                res.status(201).send(post)
+                if(req.body.title == '' || req.body.body == '') {
+                    res.status(204).send('Title or body is empty.');
+                } else {
+                    const post = await Post.create({
+                        title: req.body.title,
+                        body: req.body.body,
+                        author_id: decodedJWT.id,
+                        author_name: decodedJWT.username
+                    })
+                    res.status(201).send(post) //Send only title,body,author id and name instead of whole post object?
+                }
             } else {
                 res.status(401).send('You are not authorized to this.');
             }
         } catch (err) {
             console.log(err);
-            res.status(500).send('Something went wrong.')
+            res.status(500).send('Something has gone wrong, unknown error.')
         }
     },
     // @desc Delete specific post
@@ -86,15 +89,18 @@ module.exports = {
     async deletePost (req, res) {
         try {
             const post = await Post.findByPk(req.params.postId);
+
             if(post) {
                 const tokenJWT = (req.headers.authorization).replace('Bearer ', '');
                 const decodedJWT = jwt.verify(tokenJWT, process.env.TOKEN_SECRET)
+
                 if(decodedJWT.isAdmin == true) {
                     const postComments = await Comment.findAll({
                         where: {
                           post_id: req.params.postId
                         }
                     });
+
                     if(postComments) {
                         await Comment.destroy({
                             where: {post_id: req.params.postId},
@@ -121,20 +127,23 @@ module.exports = {
     // @access Authorized
     async editPost(req, res) {
         try {
-            // res.status(404).send({error: 'test'})
-            // if(decodedJWT.isAdmin == true || decodedJWT.id == post.author_id) {
             const post = await Post.findByPk(req.params.postId)
             
             if(post) {
                 const tokenJWT = (req.headers.authorization).replace('Bearer ', '');
                 const decodedJWT = jwt.verify(tokenJWT, process.env.TOKEN_SECRET)
+
                 if(decodedJWT.isAdmin == true) {
-                    await post.update(
-                        {body: req.body.body,
-                        title: req.body.title},
-                        {where: {id: req.params.postId}}
-                    )
-                    res.status(200).send('Post successfully edited.')
+                    if(req.body.title == '' || req.body.body == '') {
+                        res.status(204).send('Title or body is empty.');
+                    } else {
+                        await post.update(
+                            {body: req.body.body,
+                            title: req.body.title},
+                            {where: {id: req.params.postId}}
+                        )
+                        res.status(200).send('Post successfully edited.')
+                    }
                 } else {
                     res.status(401).send('You are not authorized to this.');
                 }
@@ -175,13 +184,17 @@ module.exports = {
             const tokenJWT = (req.headers.authorization).replace('Bearer ', '');
             const decodedJWT = jwt.verify(tokenJWT, process.env.TOKEN_SECRET)
 
-            const comment = await Comment.create({
-                body: req.body.body,
-                author_id: decodedJWT.id,
-                author_name: decodedJWT.username,
-                post_id: req.params.postId
-            })
-            res.send(comment)
+            if(req.body.body == '') {
+                res.status(204).send('Comment content is empty.');
+            } else {
+                const comment = await Comment.create({
+                    body: req.body.body,
+                    author_id: decodedJWT.id,
+                    author_name: decodedJWT.username,
+                    post_id: req.params.postId
+                })
+                res.send(comment)
+            }
         } catch (err) {
             console.log(err);
             res.status(500).send('Something went wrong.')
@@ -221,11 +234,15 @@ module.exports = {
                 const tokenJWT = (req.headers.authorization).replace('Bearer ', '');
                 const decodedJWT = jwt.verify(tokenJWT, process.env.TOKEN_SECRET)
                 if(decodedJWT.isAdmin == true || decodedJWT.id == comment.author_id) {
-                    await comment.update(
-                        {body: req.body.comment},
-                        {where: {id: req.params.postId}}
-                    )
-                    res.status(200).send('Comment successfully edited.')
+                    if(req.body.comment == '') {
+                        res.status(204).send('Comment content is empty.');
+                    } else {
+                        await comment.update(
+                            {body: req.body.comment},
+                            {where: {id: req.params.postId}}
+                        )
+                        res.status(200).send('Comment successfully edited.')
+                    }
                 } else {
                     res.status(401).send('You are not authorized to this.');
                 }

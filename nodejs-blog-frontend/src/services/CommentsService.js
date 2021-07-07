@@ -7,8 +7,8 @@ export default {
     addComment (id, credentials) {
         return Api().post('/api/v1/posts/comments/' + id, credentials)
     },
-    deleteComment (id, credentials) {
-        return Api().delete('/api/v1/posts/comments/' + id, { data: credentials})
+    deleteComment (id) {
+        return Api().delete('/api/v1/posts/comments/' + id)
     },
     editComment (id, credentials) {
         return Api().put('/api/v1/posts/comments/' + id, credentials);

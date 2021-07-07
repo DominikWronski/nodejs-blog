@@ -1,6 +1,6 @@
 <template>
 <div class="editpost">
-    <v-flex xs6 offset-xs3 test>
+    <v-flex xs6 offset-xs3 topPadding>
       <v-card>
         <v-col>
             <v-card-title>Edit post</v-card-title>
@@ -61,42 +61,30 @@ export default {
         } else if(this.body == '') {
             this.errors.push('Post body required.');
         } else {
-              const response = await PostsService.editPost(this.postId, {
+              await PostsService.editPost(this.postId, {
                 title: this.title,
                 body: this.body,
                 user: this.$store.state.token
               })
               this.$router.push('/')
-              console.log(response);
         }
       } catch (error) {
         this.errors.push(error.response.data)
       }
     },
-
-      async loadPost () {
-        try {
-              let response = (await PostsService.loadPost(this.$route.params.postId)).data;
-              this.postId = response.id
-              this.title = response.title;
-              this.body = response.body
-
-        } catch (error) {
-          this.errors.push(error.response.data)
-        }
-      },
-
+    async loadPost () {
+      try {
+        let response = (await PostsService.loadPost(this.$route.params.postId)).data;
+        this.postId = response.id
+        this.title = response.title;
+        this.body = response.body
+      } catch (error) {
+        this.errors.push(error.response.data)
+      }
+    },
   },
   mounted() {
-            this.loadPost()
+    this.loadPost()
   }
-
 }
-
 </script>
-
-<style scoped>
-.test {
-      padding-top: 35px;
-}
-</style>
